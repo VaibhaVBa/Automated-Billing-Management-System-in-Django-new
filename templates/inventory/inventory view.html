@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block home %}
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="{% static 'css/inventory view.css' %}" />
+<link rel="stylesheet" href="https://fontawesome.com/v4.7.0/assets/font-awesome/css/font-awesome.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<div class="container">
+	<div class="row">
+		<aside class="col-md-3">
+			<p></p>
+			<div class="card">
+
+				<article class="filter-group">
+
+					<header class="card-header">
+						<h6 class="title">Product type</h6>
+					</header>
+					<div class="filter-content collapse show" id="collapse_1">
+						<div class="card-body">
+							<div class="input-group">
+								<div class="input-group-append">
+									<form method="POST">
+										{% csrf_token %}
+										<input type="search" placeholder="Search.." name="search_keyword"
+											style="border-radius: 10px; width: 100%;">
+								</div>
+							</div>
+						</div>
+					</div>
+				</article>
+				<article class="filter-group">
+					<header class="card-header">
+						<h6 class="title">Type </h6>
+					</header>
+					<div class="filter-content collapse show" id="collapse_2">
+						<div class="card-body">
+							<label class="custom-control custom-checkbox">
+								<input type="checkbox" value="liquid" name="cat" class="custom-control-input">
+								<div class="custom-control-label">Liquid
+								</div>
+							</label>
+							<label class="custom-control custom-checkbox">
+								<input type="checkbox" value="tablets" name="cat" class="custom-control-input">
+								<div class="custom-control-label">Tablets
+								</div>
+							</label>
+							<label class="custom-control custom-checkbox">
+								<input type="checkbox" value="capsules" name="cat" class="custom-control-input">
+								<div class="custom-control-label">Capsules
+								</div>
+							</label>
+							<label class="custom-control custom-checkbox">
+								<input type="checkbox" value="injectibles" name="cat" class="custom-control-input">
+								<div class="custom-control-label">Injectibles
+								</div>
+							</label>
+							<label class="custom-control custom-checkbox">
+								<input type="checkbox" value="inhaler" name="cat" class="custom-control-input">
+								<div class="custom-control-label">Inhalers
+								</div>
+							</label>
+						</div>
+					</div>
+				</article>
+				<article class="filter-group">
+					<header class="card-header">
+						<h6 class="title">Price range </h6>
+					</header>
+					<div class="filter-content collapse show" id="collapse_3">
+						<div class="card-body">
+							<div class="form-row">
+								<div class="form-group col-md-6">
+									<label>Min</label>
+									<input class="form-control" placeholder="₹0" type="number" name="min_price">
+								</div>
+								<div class="form-group text-right col-md-6">
+									<label>Max</label>
+									<input class="form-control" placeholder="₹1,000" type="number" name="max_price">
+								</div>
+							</div>
+							<button class="btn btn-block btn-primary">Search</button>
+							</form>
+						</div>
+					</div>
+				</article>
+			</div>
+
+		</aside>
+		<main class="col-md-9">
+			<header class="border-bottom mb-4 pb-3">
+			</header>
+			{% for message in messages %}
+			<div class="alert" style="background: orange; color: white; text-align: center">
+				{{message}}
+			</div>
+			{% endfor %}
+			<div>
+				<table class="table table-hover" style="width:90%; margin-left: 70px; margin-top: 10px;">
+					<thead>
+						<tr>
+							<th scope="col" style="	font-weight: bold;">Item ID</td>
+							<th scope="col" style="	font-weight: bold;">Product Name</td>
+							<th scope="col" style="	font-weight: bold;">Quantity</td>
+							<th scope="col" style="	font-weight: bold;">Expiry Date</td>
+							<th scope="col" style="	font-weight: bold;">Discount</td>
+							<th scope="col" style="	font-weight: bold;">Price</td>
+						</tr>
+					</thead>
+					{% for item in items %}
+					{% if item.6 == "Valid" %}
+					<tr>
+						<td scope="row">{{ item.0 }}</td>
+						<td>{{ item.1 }}<br>{% if item.9 == "Out of Stock" %}<span class="badge badge-warning">Out of
+								stock</span>{% endif %}</td>
+						<form method="POST">
+							{% csrf_token %}
+							<td><input type="number" id="quantity" name="quantity" min="0" max="1,000"
+									style="width: 50%;"></td>
+							{% if item.8 == "Expired" %}
+							<td style="color: red;">{{ item.2 }}</td>
+							{% else %}
+							<td>{{ item.2 }}</td>
+							{% endif %}
+							{% if item.3 != 0 %}
+							<td>{{ item.3 }}%</td>
+							<td style="width: 20%;padding-bottom: 10px;"><del>₹{{ item.4|floatformat:2 }}</del><br>
+								₹{{ item.5|floatformat:2 }}<br>
+								{% if item.8 == "Expired" or item.9 == "Out of Stock" %}
+								<button class="btn btn-primary" disabled>Add to Cart</button>
+								{% else %}
+								<button class="btn btn-primary">Add to Cart</button>
+								{% endif %}
+							</td>
+							{% else %}
+							<td>-</td>
+							<td style="width: 20%;padding-bottom: 10px;">
+								₹{{ item.5|floatformat:2 }}<br>
+								{% if item.8 == "Expired" or item.9 == "Out of Stock" %}
+								<button class="btn btn-primary" disabled>Add to Cart</button>
+								{% else %}
+								<button class="btn btn-primary">Add to Cart</button>
+								{% endif %}
+							</td>
+							{% endif %}
+							<input type="text" value="{{ item.0 }}" name="id" style="display: none;">
+						</form>
+					</tr>
+					{% endif %}
+					{% endfor %}
+				</table>
+			</div>
+		</main>
+	</div>
+</div>
+<script>
+	setTimeout(function () {
+		document.querySelector('.alert').style.display = 'none';
+	}, 3000);
+</script>
+{% endblock home %}

@@ -1,0 +1,29 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/footer.css' %}">
+
+<footer class="section-p1">
+    <div class="col">
+        <img class="logo" src="{% static 'img/logo.jpg' %}" alt="">
+        <h4>Contact</h4>
+        <p> <i class="fa-solid fa-location-dot"></i> <strong>Address:</strong>VIT,Vellore</p>
+        <p> <i class="fa-solid fa-phone"></i> <strong>Phone:</strong>1800-123-4567(Toll free)</p>
+        <p> <i class="fa-solid fa-envelope"></i> <strong>Mail:</strong>help@pharmawebsite.com</p>
+    </div>
+    <div class="col">
+        <h4>About</h4>
+        <a href="{% url 'about' %}">About Us</a>
+        <a href="{% url 'tnc' %}">Terms and Conditions</a>
+        <a href="{% url 'contact' %}">Contact Us</a>
+    </div>
+    </div>
+    <div class="col">
+        <h4>My Account</h4>
+        {% if user.is_authenticated %}
+        <a class="" href="{% url 'logout' %}" class="dropdown-item">Logout</a>
+        {% else %}
+        <a class="" href="{% url 'login' %}" class="dropdown-item">Login</a>
+        {% endif %}
+        <a href="{% url 'cart' %}">View Cart</a>
+    </div>
+</footer>
